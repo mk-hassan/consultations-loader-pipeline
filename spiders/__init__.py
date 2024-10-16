@@ -1,0 +1,1 @@
+from .islamweb_spider import IslamwebspiderSpider
