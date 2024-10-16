@@ -1,0 +1,6 @@
+[sources.scraping]
+start_urls = []
+start_urls_file = "resource_links.txt"
+
+[runtime]
+dlthub_telemetry = true
