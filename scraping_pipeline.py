@@ -25,6 +25,9 @@ def scrape_quotes() -> None:
         write_disposition="merge",
     )
 
+    with open("schema.yml", "w") as schema:
+        schema.write(pipeline.default_schema.to_pretty_yaml())
+
 
 if __name__ == "__main__":
     scrape_quotes()
