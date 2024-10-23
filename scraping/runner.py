@@ -47,8 +47,8 @@ class Signals:
         logger.info(f"Crawling engine stopped for pipeline={self.pipeline_name}")
         self.stopping = True
         self.crawler.stop()
-        self.queue.close()
         self.queue.join()
+        self.queue.close()
 
     def __call__(self, crawler: CrawlerProcess) -> Self:
         self.crawler = crawler
@@ -129,6 +129,10 @@ class PipelineRunner(Runnable):
             # pass it to pipeline.run and dlt will handle the rest.
             self.queue.stream(),
             name=resource_name,
+            primary_key="id",
+            write_disposition="merge",
+            table_name="islamweb",
+            columns={"repliers": {"data_type": "json"}},
         )
 
     def is_default_dataset_name(self, pipeline: dlt.Pipeline) -> bool:
@@ -165,7 +169,7 @@ class PipelineRunner(Runnable):
             finally:
                 self.queue.close()
 
-        thread_runner = threading.Thread(target=run)
+        thread_runner = threading.Thread(target=run, name="dlt-pipeline-runner")
         thread_runner.start()
         return thread_runner
 

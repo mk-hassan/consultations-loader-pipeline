@@ -3,9 +3,9 @@ from scraping import run_pipeline
 from spiders import IslamwebspiderSpider
 
 
-def scrape_quotes() -> None:
+def scrape_consultations() -> None:
     pipeline = dlt.pipeline(
-        pipeline_name="islamic_consultations",
+        pipeline_name="consultations",
         destination="qdrant",
         dataset_name="consultations",
     )
@@ -20,9 +20,6 @@ def scrape_quotes() -> None:
                 "pipelines.IslamwebConsultationPipeline": 300,
             },
         },
-        primary_key="id",
-        table_name="islamweb",
-        write_disposition="merge",
     )
 
     with open("schema.yml", "w") as schema:
@@ -30,4 +27,4 @@ def scrape_quotes() -> None:
 
 
 if __name__ == "__main__":
-    scrape_quotes()
+    scrape_consultations()
