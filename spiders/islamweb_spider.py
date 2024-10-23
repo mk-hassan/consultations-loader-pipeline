@@ -33,13 +33,13 @@ class IslamwebspiderSpider(Spider):
         islamwebConsultation["repliers"] = (
             consult_meta_dat[0].xpath("./a/text()").getall()
         )
-        islamwebConsultation["watches_no"] = (
+        islamwebConsultation["watch_count"] = (
             consult_meta_dat[2].xpath("./a/text()").get()
         )
         islamwebConsultation["date"] = consult_meta_dat[3].xpath("./a/text()").get()
         islamwebConsultation["question"] = question.xpath(".//p//text()").getall()
         islamwebConsultation["answer"] = answer.xpath(".//p//text()").getall()
-        islamwebConsultation["main_category"] = response.xpath(
+        islamwebConsultation["category"] = response.xpath(
             "//*[@class='title-page']//ol/li[2]//span/text()"
         ).get()
 
