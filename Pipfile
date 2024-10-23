@@ -7,6 +7,7 @@ name = "pypi"
 dlt = {extras = ["qdrant"], version = ">=0.5.1"}
 scrapy = ">=2.11.0"
 streamlit = "*"
+prefect = {extras = ["email"], version = "*"}
 
 [dev-packages]
 ipykernel = "*"
