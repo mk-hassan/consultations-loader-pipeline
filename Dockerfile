@@ -1,13 +1,10 @@
-FROM python:3.9.6-alpine3.14
+FROM python:3.9
 
 WORKDIR /App
 
-COPY requirements.txt .
+COPY . .
 
-RUN apk update && apk upgrade
-RUN apk add --no-cache sqlite
-RUN pip3 install -r requirements.txt
+RUN pip install --no-cache-dir -r requirements.txt
+RUN chmod +x /App/wait-for-it.sh
 
-ENTRYPOINT [ "prefect", "server", "start" ]
-
-# docker run --name crawler -it -d dlt/islamic_pipeline:v0.1
+ENTRYPOINT [ "python", "scraping_pipeline.py" ]

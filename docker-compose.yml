@@ -1,0 +1,38 @@
+services:
+  prefect-server:
+    image: prefecthq/prefect:3.0.10-python3.9
+    restart: always
+    container_name: prefect-server
+    environment:
+      - PREFECT_SERVER_API_HOST=0.0.0.0
+      - PREFECT_API_URL=http://127.0.0.1:4200/api
+      - PREFECT_SERVER_ANALYTICS_ENABLED=False
+      - PREFECT_AGENT_QUERY_INTERVAL=3600
+      - PREFECT_LOGGING_LEVEL=WARNING
+    entrypoint: [ "prefect", "server", "start" ]
+    ports:
+      - 4200:4200
+    networks:
+      - prefect-network
+
+  prefect-client:
+    build: .
+    image: prefect-client:v1.0
+    container_name: pipeline-runner
+    depends_on:
+      - prefect-server
+    tty: true
+    stdin_open: true
+    env_file:
+      - .env
+    environment:
+      - PREFECT_API_URL=http://prefect-server:4200/api
+    volumes:
+      - ${PWD}/output/:/App/output/
+    entrypoint: [ "/App/wait-for-it.sh", "http://prefect-server:4200/api", "python", "scraping_pipeline.py" ]
+    networks:
+      - prefect-network
+
+networks:
+  prefect-network:
+    driver: bridge
