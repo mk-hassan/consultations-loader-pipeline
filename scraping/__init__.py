@@ -1,7 +1,7 @@
 """Scraping source
-
 Integrates Dlt and Scrapy to facilitate scraping pipelines.
 """
+
 import inspect
 import typing as t
 

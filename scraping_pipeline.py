@@ -16,7 +16,12 @@ import os
 from datetime import datetime
 
 
-@task(name="main-task", log_prints=True, retries=3, retry_delay_seconds=100)
+@task(
+    name="scraping-loading-consultations",
+    log_prints=True,
+    retries=3,
+    retry_delay_seconds=100,
+)
 def scrape_consultations() -> None:
     pipeline = dlt.pipeline(
         pipeline_name="consultations",
@@ -33,10 +38,17 @@ def scrape_consultations() -> None:
             "ITEM_PIPELINES": {
                 "pipelines.IslamwebConsultationPipeline": 300,
             },
+            "FEEDS": {
+                "./output/scrapped-consultations.jsonl": {
+                    "format": "jsonl",
+                    "encoding": "utf8",
+                    "overwrite": True,
+                }
+            },
         },
     )
 
-    with open("schema.yml", "w") as schema:
+    with open(f"./output/schema-{datetime.now()}.yml", "w") as schema:
         schema.write(pipeline.default_schema.to_pretty_yaml())
 
 
@@ -47,7 +59,7 @@ def email_send_message_flow(msg):
     if notified_email == None:
         raise ValueError("email address should be provided")
 
-    email_send_message.with_options(name=f"email {notified_email}").submit(
+    email_send_message.with_options(name=f"emailing {notified_email}").submit(
         email_server_credentials=email_server_credentials,
         subject=f"Monthly DLT Pipeline Flow Status Notification {datetime.now().date()}",
         msg="",
@@ -56,7 +68,7 @@ def email_send_message_flow(msg):
     ).wait()
 
 
-@flow(name="main-flow")
+@flow(name="main")
 def main():
     admin_name = os.getenv("ADMIN_NAME")
     try:
@@ -74,8 +86,8 @@ def main():
         )
 
 
+# run it once, then schedule
 if __name__ == "__main__":
-    # run it once, then schedule
     main()
     main.serve(
         name="scrapping_consultations_schedule",

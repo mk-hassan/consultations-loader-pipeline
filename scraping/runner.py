@@ -6,7 +6,7 @@ import dlt
 
 from dlt.common import logger
 from dlt.destinations.adapters import qdrant_adapter
-from prefect import task
+
 from pydispatch import dispatcher  # type: ignore
 from typing_extensions import Self
 
@@ -83,7 +83,6 @@ class ScrapyRunner(Runnable):
         self.crawler = CrawlerProcess(settings=settings)
         self.signals = signals
 
-    @task(name="scrapy")
     def run(self, *args: P.args, **kwargs: P.kwargs) -> None:
         """Runs scrapy crawler process
 
@@ -141,7 +140,6 @@ class PipelineRunner(Runnable):
         default_name = pipeline.pipeline_name + pipeline.DEFAULT_DATASET_SUFFIX
         return pipeline.dataset_name == default_name
 
-    @task(name="dlt-pipeline")
     def run(
         self,
         *args: P.args,
